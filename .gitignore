@@ -1,0 +1,13 @@
+sudal
+obj/
+android-project/bin/
+android-project/gen/
+android-project/libs/
+android-project/obj/
+# SDL source
+android-project/jni/SDL2-2.0.7/
+android-project/jni/SDL2_image-2.0.2/
+# android SDK
+tools_r25.2.5-linux/
+# android NDK
+android-ndk-r16/
