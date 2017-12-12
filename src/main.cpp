@@ -32,11 +32,11 @@ public:
 //        m_pos += (m_hero.get_pos() - m_pos) * 0.1f;
 
         auto p = m_hero.get_pos();
-        if (m_pos.x < p.x) m_pos.x += 2;
-        if (m_pos.x > p.x) m_pos.x -= 2;
-        if (m_pos.y < p.y) m_pos.y += 2;
-        if (m_pos.y > p.y) m_pos.y -= 2;
-
+        if (m_pos.x < p.x) m_pos.x += 0.25f;
+        if (m_pos.x > p.x) m_pos.x -= 0.25f;
+        if (m_pos.y < p.y) m_pos.y += 0.25f;
+        if (m_pos.y > p.y) m_pos.y -= 0.25f;
+        m_pos = p;
         m_camera.update(m_pos);
     }
     void draw() {

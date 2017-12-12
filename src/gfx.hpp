@@ -19,7 +19,7 @@ public:
     void resize(int w, int h) {}
     void present() { SDL_RenderPresent(m_renderer); }
     void clear();
-    void render(TextureID tex, SDL_Rect const& src, SDL_Rect const& dst) const;
+    void render(TextureID tex, SDL_Rect const& src, SDL_Rect const& dst, int flip=0) const;
 
     SDL_Renderer* renderer() const { return m_renderer; }
 
