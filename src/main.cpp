@@ -17,25 +17,38 @@ public:
     bool init() {
         if (!m_map.load("res/map.txt")) return false;
 
-        for (int y = 0; y < m_map.size().y; ++y)
-        for (int x = 0; x < m_map.size().x; ++x) {
-            char t = m_map.tile_at(x, y);
-            if (t == '@') m_hero.set_pos(glm::vec2(x * 16, y * 16));
+        for (int y = 0; y < m_map.get_size().y; ++y)
+        for (int x = 0; x < m_map.get_size().x; ++x) {
+            char t = m_map.get_tile_at(x, y);
+            if (t == '@') m_hero.set_pos(glm::vec2(x * TILE_SIZE, y * TILE_SIZE));
         }
 
         return true;
     }
     void update() {
         m_hero.update(input.get_state());
+
+        static glm::vec2 m_pos = m_hero.get_pos();
+//        m_pos += (m_hero.get_pos() - m_pos) * 0.1f;
+
+        auto p = m_hero.get_pos();
+        if (m_pos.x < p.x) m_pos.x += 2;
+        if (m_pos.x > p.x) m_pos.x -= 2;
+        if (m_pos.y < p.y) m_pos.y += 2;
+        if (m_pos.y > p.y) m_pos.y -= 2;
+
+        m_camera.update(m_pos);
     }
     void draw() {
-        m_map.draw();
-        m_hero.draw();
+        m_map.draw(m_camera);
+        m_hero.draw(m_camera);
     }
 
 private:
-    Map  m_map;
-    Hero m_hero;
+
+    Map    m_map;
+    Hero   m_hero;
+    Camera m_camera;
 };
 
 
@@ -69,10 +82,13 @@ int main(int argc, char** args) {
 
 
             case SDL_FINGERDOWN:
-            case SDL_FINGERMOTION:
+                input.finger_down  (e.tfinger.fingerId, glm::ivec2(e.tfinger.x * WIDTH, e.tfinger.y * HEIGHT));
+                break;
             case SDL_FINGERUP:
-                input.event(e.type, e.tfinger.fingerId,
-                            glm::ivec2(e.tfinger.x * WIDTH, e.tfinger.y * HEIGHT));
+                input.finger_up    (e.tfinger.fingerId, glm::ivec2(e.tfinger.x * WIDTH, e.tfinger.y * HEIGHT));
+                break;
+            case SDL_FINGERMOTION:
+                input.finger_motion(e.tfinger.fingerId, glm::ivec2(e.tfinger.x * WIDTH, e.tfinger.y * HEIGHT));
                 break;
 
 			default: break;
@@ -85,9 +101,9 @@ int main(int argc, char** args) {
         gfx.clear();
         game.draw();
 
-        gfx.set_font(FONT_SLIM);
-        static int i = 0;
-        gfx.printf({4, 4}, "Hello, world! %d", i++);
+//        gfx.set_font(FONT_SLIM);
+//        static int i = 0;
+//        gfx.printf({4, 4}, "Hello, world! %d", i++);
 
         gfx.present();
     }

@@ -1,6 +1,8 @@
 #pragma once
+#include <array>
 #include <glm.hpp>
 #include <SDL.h>
+
 
 class Input {
 public:
@@ -11,7 +13,10 @@ public:
         bool       fire;
     };
 
-    void event(uint32_t type, int id, glm::ivec2 const& pos);
+    void finger_down(int id, glm::ivec2 const& pos);
+    void finger_up(int id, glm::ivec2 const& pos);
+    void finger_motion(int id, glm::ivec2 const& pos);
+
     State get_state() const;
 
 
@@ -22,6 +27,19 @@ private:
         glm::ivec2 mov;
     };
 
-    Touch m_touch;
+    enum {
+        TOUCH_DPAD,
+        TOUCH_JUMP,
+        TOUCH_FIRE,
+
+        TOUCH_COUNT
+    };
+
+    std::array<Touch, TOUCH_COUNT> m_touches;
+
+    Touch* get_touch(int id) {
+        for(Touch& t : m_touches) if (t.id == id) return &t;
+        return nullptr;
+    };
 };
 

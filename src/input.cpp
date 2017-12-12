@@ -1,34 +1,50 @@
 #include "input.hpp"
+#include "gfx.hpp"
 
 
-void Input::event(uint32_t type, int id, glm::ivec2 const& pos) {
-    if (type == SDL_FINGERDOWN) {
-        if (m_touch.id != -1) return;
-        m_touch.id = id;
-        m_touch.pos = pos;
+void Input::finger_down(int id, glm::ivec2 const& pos) {
+    int index = TOUCH_DPAD;
+    if (pos.x > WIDTH / 2) index = TOUCH_JUMP;
+
+    Touch& t = m_touches[index];
+    if (t.id != -1) return;
+    t.id = id;
+    t.pos = pos;
+}
+
+
+void Input::finger_up(int id, glm::ivec2 const& pos) {
+    if (Touch* t = get_touch(id)) {
+        t->id = -1;
+        t->mov = {};
     }
-    if (type == SDL_FINGERUP) {
-        if (m_touch.id != id) return;
-        m_touch.id = -1;
-        m_touch.mov = {};
-    }
-    if (type == SDL_FINGERMOTION) {
-        if (m_touch.id != id) return;
-        m_touch.mov += pos - m_touch.pos;
-        m_touch.mov = glm::clamp(m_touch.mov, glm::ivec2(-5, -5), glm::ivec2(5, 5));
-        m_touch.pos = pos;
+}
+
+
+void Input::finger_motion(int id, glm::ivec2 const& pos) {
+    if (Touch* t = get_touch(id)) {
+        t->mov += pos - t->pos;
+        t->mov = glm::clamp(t->mov, glm::ivec2(-5, -5), glm::ivec2(5, 5));
+        t->pos = pos;
     }
 }
 
 
 Input::State Input::get_state() const {
     State s = {};
-    s.dpad.x = (m_touch.mov.x > 2) - (m_touch.mov.x < -2);
-    s.dpad.y = (m_touch.mov.y > 2) - (m_touch.mov.y < -2);
 
+    // touch
+    glm::ivec2 const& dpad = m_touches[TOUCH_DPAD].mov;
+    s.dpad.x = (dpad.x > 2) - (dpad.x < -2);
+    s.dpad.y = (dpad.y > 2) - (dpad.y < -2);
+    s.jump = m_touches[TOUCH_JUMP].id != -1;
+
+    // keyboard
     const Uint8* ks = SDL_GetKeyboardState(nullptr);
-    s.dpad.x = !!ks[SDL_SCANCODE_RIGHT] - !!ks[SDL_SCANCODE_LEFT];
-    s.dpad.y = !!ks[SDL_SCANCODE_UP] - !!ks[SDL_SCANCODE_DOWN];
+    s.dpad.x += !!ks[SDL_SCANCODE_RIGHT] - !!ks[SDL_SCANCODE_LEFT];
+    s.dpad.y += !!ks[SDL_SCANCODE_DOWN] - !!ks[SDL_SCANCODE_UP];
+    s.jump |= !!ks[SDL_SCANCODE_X];
+    s.fire |= !!ks[SDL_SCANCODE_C];
 
     return s;
 }
