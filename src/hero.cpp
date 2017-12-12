@@ -15,15 +15,16 @@ void Hero::update(Input::State const& input_state) {
 
     // jumping
     if (!m_in_air && input_state.jump) {
-        m_vel.y -= 5;
+        m_vel.y -= 5.5;
     }
 
 
     // gravity
-    m_vel.y += 0.2;
+    m_vel.y += 0.25;
+    float vy = glm::clamp(m_vel.y, -4.0f, 4.0f);
 
     // vertical collision
-    m_rect.pos.y += m_vel.y;
+    m_rect.pos.y += vy;
     float dy = m_map.collision(m_rect, Axis::Y);
     if (dy != 0) {
         m_rect.pos.y += dy;
