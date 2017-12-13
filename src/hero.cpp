@@ -5,7 +5,7 @@ void Hero::update(Input::State const& input_state) {
 
     if (input_state.dpad.x != 0) m_dir = input_state.dpad.x;
 
-    m_vel.x = glm::clamp(input_state.dpad.x * 1.0f, m_vel.x - 0.25f, m_vel.x + 0.25f);
+    m_vel.x = glm::clamp(input_state.dpad.x * 1.5f, m_vel.x - 0.25f, m_vel.x + 0.25f);
 
     // horizontal collision
     m_rect.pos.x += m_vel.x;
@@ -17,7 +17,7 @@ void Hero::update(Input::State const& input_state) {
 
     // jumping
     if (!m_in_air && input_state.jump && !m_last_input_state.jump) {
-        m_vel.y -= 5;
+        m_vel.y -= 4;
         m_jump_control = true;
         m_in_air       = true;
     }
@@ -39,7 +39,7 @@ void Hero::update(Input::State const& input_state) {
 
     // vertical collision
     m_rect.pos.y += vy;
-    float dy = m_map.collision(m_rect, Axis::Y);
+    float dy = m_map.collision(m_rect, Axis::Y, vy);
     if (dy != 0) {
         m_rect.pos.y += dy;
         m_vel.y = 0;

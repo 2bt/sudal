@@ -2,6 +2,7 @@
 #include "gfx.hpp"
 
 
+
 float collision(Rect const& a, Rect const& b, Axis axis) {
     if (a.pos.x >= b.pos.x + b.size.x
     || a.pos.y >= b.pos.y + b.size.y
@@ -14,7 +15,7 @@ float collision(Rect const& a, Rect const& b, Axis axis) {
 }
 
 
-float Map::collision(Rect const& rect, Axis axis) const {
+float Map::collision(Rect const& rect, Axis axis, float vel) const {
 
     int x1 = std::floor((rect.pos.x + TILE_SIZE / 2) / TILE_SIZE);
     int x2 = std::floor((rect.pos.x + rect.size.x + TILE_SIZE / 2) / TILE_SIZE);
@@ -31,14 +32,21 @@ float Map::collision(Rect const& rect, Axis axis) const {
     for (int x = x1; x <= x2; ++x) {
 
         char t = get_tile_at(x, y);
-        if (is_solid(t)) {
+        if (t == TILE_WALL || t == TILE_BOARD) {
 
             tile_rect.pos.x = x * TILE_SIZE - TILE_SIZE / 2;
             tile_rect.pos.y = y * TILE_SIZE - TILE_SIZE / 2;
             float e = ::collision(rect, tile_rect, axis);
-            if (std::abs(e) > std::abs(d)) d = e;
 
-         }
+            if (t == TILE_WALL) {
+                if (std::abs(e) > std::abs(d)) d = e;
+            }
+            else if (t == TILE_BOARD) { // jump though
+                if (axis == Axis::Y && vel > 0 && e < 0 && -e <= vel + 0.001f) {
+                    d = e;
+                }
+            }
+        }
     }
 
     return d;
@@ -79,25 +87,57 @@ void Map::draw(Camera const& camera) {
     Rect const& rect = camera.get_rect();
 
     int x1 = std::floor(rect.pos.x / TILE_SIZE);
-    int x2 = std::floor((rect.pos.x + rect.size.x) / TILE_SIZE);
+    int x2 = std::floor((rect.pos.x + rect.size.x + TILE_SIZE / 2) / TILE_SIZE);
     int y1 = std::floor(rect.pos.y / TILE_SIZE);
-    int y2 = std::floor((rect.pos.y + rect.size.y) / TILE_SIZE);
+    int y2 = std::floor((rect.pos.y + rect.size.y + TILE_SIZE / 2) / TILE_SIZE);
 
     for (int y = y1; y <= y2; ++y)
     for (int x = x1; x <= x2; ++x) {
 
-        int b = is_solid(get_tile_at(x, y)) * 1 +
-                is_solid(get_tile_at(x + 1, y)) * 2 +
-                is_solid(get_tile_at(x, y + 1)) * 4 +
-                is_solid(get_tile_at(x + 1, y + 1)) * 8;
-
-        SDL_Rect src = { 1 + b * (TILE_SIZE + 2), 1, TILE_SIZE, TILE_SIZE };
         SDL_Rect dst = {
             int(x * TILE_SIZE - rect.pos.x),
             int(y * TILE_SIZE - rect.pos.y),
             TILE_SIZE, TILE_SIZE
         };
-        gfx.render(TEX_TILES, src, dst);
+
+        char ts[4] = {
+            get_tile_at(x,     y    ),
+            get_tile_at(x + 1, y    ),
+            get_tile_at(x,     y + 1),
+            get_tile_at(x + 1, y + 1),
+        };
+
+        int b = (ts[0] == TILE_WALL) * 1 +
+                (ts[1] == TILE_WALL) * 2 +
+                (ts[2] == TILE_WALL) * 4 +
+                (ts[3] == TILE_WALL) * 8;
+
+        if (b) {
+            SDL_Rect src = { 1 + b * (TILE_SIZE + 2), 1, TILE_SIZE, TILE_SIZE };
+            gfx.render(TEX_TILES, src, dst);
+        }
+
+        b = (ts[2] == TILE_BOARD) * 1 +
+            (ts[3] == TILE_BOARD) * 2;
+
+        if (b) {
+            SDL_Rect src = { 1 + b * (TILE_SIZE + 2), 19, TILE_SIZE, TILE_SIZE };
+            gfx.render(TEX_TILES, src, dst);
+        }
+
+
+        if (ts[0] == TILE_BOX) {
+            SDL_Rect src = { 0, 280, TILE_SIZE, TILE_SIZE };
+            SDL_Rect dst = {
+                int(x * TILE_SIZE - rect.pos.x - TILE_SIZE / 2),
+                int(y * TILE_SIZE - rect.pos.y - TILE_SIZE / 2),
+                TILE_SIZE, TILE_SIZE
+            };
+            gfx.render(TEX_TILES, src, dst);
+        }
+
+
+
     }
 }
 

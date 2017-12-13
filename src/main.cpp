@@ -28,16 +28,7 @@ public:
     void update() {
         m_hero.update(input.get_state());
 
-        static glm::vec2 m_pos = m_hero.get_pos();
-//        m_pos += (m_hero.get_pos() - m_pos) * 0.1f;
-
-        auto p = m_hero.get_pos();
-        if (m_pos.x < p.x) m_pos.x += 0.25f;
-        if (m_pos.x > p.x) m_pos.x -= 0.25f;
-        if (m_pos.y < p.y) m_pos.y += 0.25f;
-        if (m_pos.y > p.y) m_pos.y -= 0.25f;
-        m_pos = p;
-        m_camera.update(m_pos);
+        m_camera.update(m_hero.get_pos());
     }
     void draw() {
         m_map.draw(m_camera);
