@@ -2,7 +2,6 @@
 #include "gfx.hpp"
 
 
-
 float collision(Rect const& a, Rect const& b, Axis axis) {
     if (a.pos.x >= b.pos.x + b.size.x
     || a.pos.y >= b.pos.y + b.size.y

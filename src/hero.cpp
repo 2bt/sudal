@@ -1,29 +1,40 @@
 #include "hero.hpp"
+#include "world.hpp"
 
 
-void Hero::update(Input::State const& input_state) {
+Hero::Hero(World& world, glm::vec2 const& pos) : Entity(world, pos) {
+    m_world.set_hero(this);
+    m_rect.size = { 8, 12 };
+}
 
-    if (input_state.dpad.x != 0) m_dir = input_state.dpad.x;
 
-    m_vel.x = glm::clamp(input_state.dpad.x * 1.5f, m_vel.x - 0.25f, m_vel.x + 0.25f);
+Hero::~Hero() {
+    m_world.set_hero(nullptr);
+}
+
+
+void Hero::update() {
+    if (m_input_state.dpad.x != 0) m_dir = m_input_state.dpad.x;
+
+    m_vel.x = glm::clamp(m_input_state.dpad.x * 1.5f, m_vel.x - 0.25f, m_vel.x + 0.25f);
 
     // horizontal collision
     m_rect.pos.x += m_vel.x;
-    float dx = m_map.collision(m_rect, Axis::X);
+    float dx = m_world.collision(m_rect, Axis::X);
     if (dx != 0) {
         m_rect.pos.x += dx;
     }
 
 
     // jumping
-    if (!m_in_air && input_state.jump && !m_last_input_state.jump) {
+    if (!m_in_air && m_input_state.jump && !m_old_input_state.jump) {
         m_vel.y -= 4;
         m_jump_control = true;
         m_in_air       = true;
     }
     if (m_in_air) {
         if (m_jump_control) {
-            if (!input_state.jump && m_vel.y < -1) {
+            if (!m_input_state.jump && m_vel.y < -1) {
                 m_vel.y = -1;
                 m_jump_control = false;
             }
@@ -39,7 +50,7 @@ void Hero::update(Input::State const& input_state) {
 
     // vertical collision
     m_rect.pos.y += vy;
-    float dy = m_map.collision(m_rect, Axis::Y, vy);
+    float dy = m_world.collision(m_rect, Axis::Y, vy);
     if (dy != 0) {
         m_rect.pos.y += dy;
         m_vel.y = 0;
@@ -51,7 +62,7 @@ void Hero::update(Input::State const& input_state) {
         m_in_air = true;
     }
 
-    m_last_input_state = input_state;
+    m_old_input_state = m_input_state;
 }
 
 

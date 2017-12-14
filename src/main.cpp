@@ -33,15 +33,14 @@ int main(int argc, char** args) {
 
 
             case SDL_FINGERDOWN:
-                game.get_input().finger_down  (e.tfinger.fingerId, glm::ivec2(e.tfinger.x * WIDTH, e.tfinger.y * HEIGHT));
-                break;
             case SDL_FINGERUP:
-                game.get_input().finger_up    (e.tfinger.fingerId, glm::ivec2(e.tfinger.x * WIDTH, e.tfinger.y * HEIGHT));
-                break;
-            case SDL_FINGERMOTION:
-                game.get_input().finger_motion(e.tfinger.fingerId, glm::ivec2(e.tfinger.x * WIDTH, e.tfinger.y * HEIGHT));
-                break;
-
+            case SDL_FINGERMOTION: {
+                    glm::ivec2 p = { e.tfinger.x * WIDTH, e.tfinger.y * HEIGHT };
+                    if (e.type == SDL_FINGERDOWN)   game.get_input().finger_down(e.tfinger.fingerId, p);
+                    if (e.type == SDL_FINGERUP)     game.get_input().finger_up(e.tfinger.fingerId, p);
+                    if (e.type == SDL_FINGERMOTION) game.get_input().finger_motion(e.tfinger.fingerId, p);
+                    break;
+                }
 			default: break;
 			}
         }
@@ -49,14 +48,8 @@ int main(int argc, char** args) {
 
         game.update();
 
-        gfx.clear();
         game.draw();
 
-//        gfx.set_font(FONT_SLIM);
-//        static int i = 0;
-//        gfx.printf({4, 4}, "Hello, world! %d", i++);
-
-        gfx.present();
     }
 
     gfx.free();
