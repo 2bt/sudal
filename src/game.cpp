@@ -21,13 +21,13 @@ void Game::draw() {
 
     m_world.draw();
 
-    SDL_SetRenderDrawColor(gfx.get_renderer(), 255, 0, 0, 255);
-    SDL_RenderDrawLine(gfx.get_renderer(),
-                       WIDTH - 40, 0,
-                       WIDTH - 40, HEIGHT);
-    SDL_RenderDrawLine(gfx.get_renderer(),
-                       WIDTH - 80, 0,
-                       WIDTH - 80, HEIGHT);
+//    SDL_SetRenderDrawColor(gfx.get_renderer(), 255, 0, 0, 255);
+//    SDL_RenderDrawLine(gfx.get_renderer(),
+//                       WIDTH - 40, 0,
+//                       WIDTH - 40, HEIGHT);
+//    SDL_RenderDrawLine(gfx.get_renderer(),
+//                       WIDTH - 80, 0,
+//                       WIDTH - 80, HEIGHT);
 
     gfx.present();
 }

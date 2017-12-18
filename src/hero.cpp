@@ -3,12 +3,9 @@
 
 
 Laser::Laser(World& world, glm::vec2 const& pos, int dir)
-    : Entity(world)
+    : Entity(world, Rect::create_centered(pos + glm::vec2(dir * 4, -2), { 8, 1 }))
     , m_dir(dir)
-{
-    m_rect.size = { 8, 1 };
-    m_rect.pos = pos - m_rect.size * 0.5f + glm::vec2(dir * 4, -2);
-}
+{}
 void Laser::update() {
     m_rect.pos.x += m_dir * 5;
     float dx = m_world.collision(m_rect, Axis::X);
@@ -29,11 +26,9 @@ void Laser::draw(Camera const& camera) {
 
 
 Hero::Hero(World& world, glm::vec2 const& pos)
-    : Entity(world)
+    : Entity(world, Rect::create_centered(pos, { 8, 12 }))
 {
     m_world.set_hero(this);
-    m_rect.size = { 8, 12 };
-    m_rect.pos = pos - m_rect.size * 0.5f;
 }
 
 
@@ -112,7 +107,6 @@ void Hero::draw(Camera const& camera) {
         (int) std::floor(pos.y - 4 + 0.5f),
         16, 16,
     };
-
     SDL_Rect src = { 0, 256, 16, 16 };
     gfx.render(TEX_TILES, src, dst, m_dir == -1);
 }

@@ -125,17 +125,6 @@ void Map::draw(Camera const& camera) {
         }
 
 
-        if (ts[0] == TILE_BOX) {
-            SDL_Rect src = { 0, 280, TILE_SIZE, TILE_SIZE };
-            SDL_Rect dst = {
-                int(x * TILE_SIZE - rect.pos.x - TILE_SIZE / 2),
-                int(y * TILE_SIZE - rect.pos.y - TILE_SIZE / 2),
-                TILE_SIZE, TILE_SIZE
-            };
-            gfx.render(TEX_TILES, src, dst);
-        }
-
-
 
     }
 }

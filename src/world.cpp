@@ -1,5 +1,6 @@
 #include "world.hpp"
 #include "hero.hpp"
+#include "box.hpp"
 
 
 bool World::init() {
@@ -10,6 +11,7 @@ bool World::init() {
         char t = m_map.get_tile_at(x, y);
         glm::vec2 pos = { x * TILE_SIZE, y * TILE_SIZE };
         if (t == '@') spawn_entity<Hero>(pos);
+        if (t == 'x') spawn_entity<Box>(pos);
     }
 
     return true;

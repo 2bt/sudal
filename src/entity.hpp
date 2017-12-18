@@ -11,7 +11,7 @@ class Entity {
 public:
     using Ptr = std::unique_ptr<Entity>;
 
-    Entity(World& world) : m_world(world) {}
+    Entity(World& world, Rect const& rect) : m_world(world), m_rect(rect) {}
 
     Rect const& get_rect() const { return m_rect; };
     bool        is_alive() const { return m_is_alive; }
