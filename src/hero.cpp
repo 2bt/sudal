@@ -2,9 +2,38 @@
 #include "world.hpp"
 
 
-Hero::Hero(World& world, glm::vec2 const& pos) : Entity(world, pos) {
+Laser::Laser(World& world, glm::vec2 const& pos, int dir)
+    : Entity(world)
+    , m_dir(dir)
+{
+    m_rect.size = { 8, 1 };
+    m_rect.pos = pos - m_rect.size * 0.5f + glm::vec2(dir * 4, -2);
+}
+void Laser::update() {
+    m_rect.pos.x += m_dir * 5;
+    float dx = m_world.collision(m_rect, Axis::X);
+    if (dx != 0) die();
+}
+void Laser::draw(Camera const& camera) {
+    auto pos = m_rect.pos - camera.get_rect().pos;
+    SDL_Rect dst = {
+        (int) std::floor(pos.x + 0.5f),
+        (int) std::floor(pos.y + 0.5f),
+        (int) m_rect.size.x,
+        (int) m_rect.size.y,
+    };
+    SDL_SetRenderDrawColor(gfx.get_renderer(), 255, 255, 255, 255);
+    SDL_RenderFillRect(gfx.get_renderer(), &dst);
+}
+
+
+
+Hero::Hero(World& world, glm::vec2 const& pos)
+    : Entity(world)
+{
     m_world.set_hero(this);
     m_rect.size = { 8, 12 };
+    m_rect.pos = pos - m_rect.size * 0.5f;
 }
 
 
@@ -62,6 +91,16 @@ void Hero::update() {
         m_in_air = true;
     }
 
+
+
+    // shooting
+    if (m_input_state.fire && m_shoot_delay == 0) {
+        m_shoot_delay = 10;
+        m_world.spawn_entity<Laser>(get_center(), m_dir);
+    }
+    if (m_shoot_delay > 0) --m_shoot_delay;
+
+
     m_old_input_state = m_input_state;
 }
 
@@ -76,6 +115,4 @@ void Hero::draw(Camera const& camera) {
 
     SDL_Rect src = { 0, 256, 16, 16 };
     gfx.render(TEX_TILES, src, dst, m_dir == -1);
-//    SDL_SetRenderDrawColor(gfx.renderer(), 255, 0, 0, 255);
-//    SDL_RenderFillRect(gfx.renderer(), &dst);
 }

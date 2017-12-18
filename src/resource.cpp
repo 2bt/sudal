@@ -35,7 +35,7 @@ std::array<SDL_Texture*, TEX_COUNT> textures;
 
 SDL_Texture* load_texture(char const* name) {
     SDL_Surface* img = IMG_Load(name);
-    SDL_Texture* tex = SDL_CreateTextureFromSurface(gfx.renderer(), img);
+    SDL_Texture* tex = SDL_CreateTextureFromSurface(gfx.get_renderer(), img);
     SDL_FreeSurface(img);
     return tex;
 }

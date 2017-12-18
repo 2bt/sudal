@@ -21,7 +21,7 @@ public:
     void clear();
     void render(TextureID tex, SDL_Rect const& src, SDL_Rect const& dst, int flip=0) const;
 
-    SDL_Renderer* renderer() const { return m_renderer; }
+    SDL_Renderer* get_renderer() const { return m_renderer; }
 
     void set_font(FontID font) { m_font = font; }
     void print(glm::ivec2 const& pos, char const* str) const;

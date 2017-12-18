@@ -52,9 +52,17 @@ void Gfx::clear() {
 
 
 void Gfx::render(TextureID tex, SDL_Rect const& src, SDL_Rect const& dst, int flip) const {
-    if (flip == 0) SDL_RenderCopy(gfx.renderer(), Resource::texture(tex), &src, &dst);
+    if (flip == 0) {
+        SDL_RenderCopy(gfx.get_renderer(), Resource::texture(tex), &src, &dst);
+    }
     else {
-        SDL_RenderCopyEx(gfx.renderer(), Resource::texture(tex), &src, &dst, 0, nullptr, SDL_FLIP_HORIZONTAL);
+        SDL_RenderCopyEx(gfx.get_renderer(),
+                         Resource::texture(tex),
+                         &src,
+                         &dst,
+                         0,
+                         nullptr,
+                         SDL_FLIP_HORIZONTAL);
     }
 }
 
