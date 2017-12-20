@@ -8,7 +8,7 @@ public:
     Laser(World& world, glm::vec2 const& pos, int dir);
 
     void update() override;
-    void on_collision(Axis axis, float dist, Entity* other);
+    void on_collision(Axis axis, float dist, Entity* other) override;
     void draw(Camera const& camera) override;
 
 private:
