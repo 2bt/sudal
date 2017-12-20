@@ -41,6 +41,9 @@ Input::State Input::get_state() const {
     s.jump = m_touches[TOUCH_JUMP].id != -1;
     s.fire = m_touches[TOUCH_FIRE].id != -1;
 
+    s.jump |= m_touches[TOUCH_FIRE].id != -1 && m_touches[TOUCH_FIRE].pos.x > WIDTH - 40;
+    s.fire |= m_touches[TOUCH_JUMP].id != -1 && m_touches[TOUCH_JUMP].pos.x < WIDTH - 40;
+
     // keyboard
     const Uint8* ks = SDL_GetKeyboardState(nullptr);
     s.dpad.x += !!ks[SDL_SCANCODE_RIGHT] - !!ks[SDL_SCANCODE_LEFT];

@@ -21,13 +21,30 @@ void Game::draw() {
 
     m_world.draw();
 
-//    SDL_SetRenderDrawColor(gfx.get_renderer(), 255, 0, 0, 255);
+    SDL_SetRenderDrawColor(gfx.get_renderer(), 255, 0, 0, 100);
+
+    SDL_SetRenderDrawBlendMode(gfx.get_renderer(), SDL_BLENDMODE_BLEND);
+
+    SDL_Rect rect = { WIDTH - 80, HEIGHT - 40, 39, 39 };
+    SDL_RenderFillRect(gfx.get_renderer(), &rect);
+    rect.x += 40;
+    SDL_RenderFillRect(gfx.get_renderer(), &rect);
+
+    gfx.print({ WIDTH - 77, HEIGHT - 12 }, "fire");
+    gfx.print({ WIDTH - 37, HEIGHT - 12 }, "jump");
+
 //    SDL_RenderDrawLine(gfx.get_renderer(),
-//                       WIDTH - 40, 0,
+//                       WIDTH - 40, HEIGHT - 40,
 //                       WIDTH - 40, HEIGHT);
 //    SDL_RenderDrawLine(gfx.get_renderer(),
-//                       WIDTH - 80, 0,
+//                       WIDTH - 80, HEIGHT - 40,
 //                       WIDTH - 80, HEIGHT);
+//    SDL_RenderDrawLine(gfx.get_renderer(),
+//                       WIDTH - 80, HEIGHT - 40,
+//                       WIDTH,      HEIGHT - 40);
+//    SDL_RenderDrawLine(gfx.get_renderer(),
+//                       WIDTH - 80, HEIGHT - 1,
+//                       WIDTH,      HEIGHT - 1);
 
     gfx.present();
 }
