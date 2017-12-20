@@ -9,6 +9,7 @@ Laser::Laser(World& world, glm::vec2 const& pos, int dir)
 {}
 void Laser::update() {
     set_move({ m_dir * 5, 0 });
+    if (collision(get_rect(), m_world.get_camera().get_rect(), Axis::X) == 0) die();
 }
 void Laser::on_collision(Axis axis, float dist, Entity* other) {
     if (!other) {

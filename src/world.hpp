@@ -20,6 +20,7 @@ public:
 
     void set_hero(Hero* hero) { m_hero = hero; }
     Hero* get_hero() { return m_hero; }
+    Camera const& get_camera() const { return m_camera; }
 
 private:
     std::vector<Entity::Ptr> m_entities;
