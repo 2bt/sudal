@@ -1,4 +1,5 @@
 #include "hero.hpp"
+#include "box.hpp"
 #include "world.hpp"
 
 
@@ -7,17 +8,24 @@ Laser::Laser(World& world, glm::vec2 const& pos, int dir)
     , m_dir(dir)
 {}
 void Laser::update() {
-    m_rect.pos.x += m_dir * 5;
-    float dx = m_world.collision(m_rect, Axis::X);
-    if (dx != 0) die();
+    set_move({ m_dir * 5, 0 });
+}
+void Laser::on_collision(Axis axis, float dist, Entity* other) {
+    if (!other) {
+        die();
+    }
+    else if (Box* box = dynamic_cast<Box*>(other)) {
+        die();
+        box->hit(1);
+    }
 }
 void Laser::draw(Camera const& camera) {
-    auto pos = m_rect.pos - camera.get_rect().pos;
+    auto pos = get_rect().pos - camera.get_rect().pos;
     SDL_Rect dst = {
         (int) std::floor(pos.x + 0.5f),
         (int) std::floor(pos.y + 0.5f),
-        (int) m_rect.size.x,
-        (int) m_rect.size.y,
+        (int) get_rect().size.x,
+        (int) get_rect().size.y,
     };
     SDL_SetRenderDrawColor(gfx.get_renderer(), 255, 255, 255, 255);
     SDL_RenderFillRect(gfx.get_renderer(), &dst);
@@ -42,13 +50,6 @@ void Hero::update() {
 
     m_vel.x = glm::clamp(m_input_state.dpad.x * 1.5f, m_vel.x - 0.25f, m_vel.x + 0.25f);
 
-    // horizontal collision
-    m_rect.pos.x += m_vel.x;
-    float dx = m_world.collision(m_rect, Axis::X);
-    if (dx != 0) {
-        m_rect.pos.x += dx;
-    }
-
 
     // jumping
     if (!m_in_air && m_input_state.jump && !m_old_input_state.jump) {
@@ -66,26 +67,10 @@ void Hero::update() {
         }
     }
 
-
-
     // gravity
     m_vel.y += 0.2;
     float vy = glm::clamp(m_vel.y, -3.0f, 3.0f);
-
-    // vertical collision
-    m_rect.pos.y += vy;
-    float dy = m_world.collision(m_rect, Axis::Y, vy);
-    if (dy != 0) {
-        m_rect.pos.y += dy;
-        m_vel.y = 0;
-        if (dy < 0) {
-            m_in_air = false;
-        }
-    }
-    else {
-        m_in_air = true;
-    }
-
+    set_move({ m_vel.x, vy });
 
 
     // shooting
@@ -96,12 +81,29 @@ void Hero::update() {
     if (m_shoot_delay > 0) --m_shoot_delay;
 
 
+    m_in_air = true;
     m_old_input_state = m_input_state;
 }
 
 
+void Hero::on_collision(Axis axis, float dist, Entity* other) {
+    if (!other || dynamic_cast<Box*>(other))
+    {
+        if (axis == Axis::X) {
+            apply_move({ dist, 0 });
+            m_vel.x = 0;
+        }
+        else {
+            apply_move({ 0, dist });
+            m_vel.y = 0;
+            if (dist < 0) m_in_air = false;
+        }
+    }
+}
+
+
 void Hero::draw(Camera const& camera) {
-    auto pos = m_rect.pos - camera.get_rect().pos;
+    auto pos = get_rect().pos - camera.get_rect().pos;
     SDL_Rect dst = {
         (int) std::floor(pos.x - 4 + 0.5f),
         (int) std::floor(pos.y - 4 + 0.5f),

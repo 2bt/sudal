@@ -1,6 +1,10 @@
 #pragma once
 #include <glm.hpp>
 
+
+enum class Axis { X, Y };
+
+
 struct Rect {
     glm::vec2 pos;
     glm::vec2 size;

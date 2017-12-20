@@ -18,7 +18,7 @@ enum {
 };
 
 
-enum class Axis { X, Y };
+float collision(Rect const& a, Rect const& b, Axis axis);
 
 
 class Map {

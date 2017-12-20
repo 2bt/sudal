@@ -8,6 +8,7 @@ public:
     Laser(World& world, glm::vec2 const& pos, int dir);
 
     void update() override;
+    void on_collision(Axis axis, float dist, Entity* other);
     void draw(Camera const& camera) override;
 
 private:
@@ -22,6 +23,7 @@ public:
     ~Hero();
 
     void update() override;
+    void on_collision(Axis axis, float dist, Entity* other) override;
     void draw(Camera const& camera) override;
     void set_input_state(Input::State state) { m_input_state = state; }
 

@@ -13,24 +13,27 @@ public:
 
     Entity(World& world, Rect const& rect) : m_world(world), m_rect(rect) {}
 
-    Rect const& get_rect() const { return m_rect; };
-    bool        is_alive() const { return m_is_alive; }
-    glm::vec2   get_center() const { return m_rect.pos + m_rect.size * 0.5f; };
+    bool             is_alive()   const { return m_is_alive; }
+    Rect const&      get_rect()   const { return m_rect; };
+    glm::vec2        get_center() const { return m_rect.pos + m_rect.size * 0.5f; };
+    glm::vec2 const& get_move()   const { return m_move; }
+    void             die() { m_is_alive = false; }
 
-    void        die() { m_is_alive = false; }
-
+    void set_move(glm::vec2 const& move) { m_move = move; }
+    void apply_move(glm::vec2 const& move) { m_rect.pos += move; }
 
     virtual ~Entity() {}
     virtual void update() {}
+    virtual void on_collision(Axis axis, float dist, Entity* other) {}
     virtual void draw(Camera const& camera);
-//    virtual void on_collision(Entity& other) {}
 
 protected:
     World& m_world;
-    Rect   m_rect = { {}, { 16, 16 } };
 
 private:
-    bool   m_is_alive = true;
+    bool      m_is_alive = true;
+    Rect      m_rect     = { {}, { 16, 16 } };
+    glm::vec2 m_move;
 };
 
 

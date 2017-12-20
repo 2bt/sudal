@@ -18,10 +18,6 @@ public:
         return *m_new_entities.back();
     }
 
-    float collision(Rect const& rect, Axis axis, float vel = 0) const {
-        return m_map.collision(rect, axis, vel);
-    }
-
     void set_hero(Hero* hero) { m_hero = hero; }
     Hero* get_hero() { return m_hero; }
 
