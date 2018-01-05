@@ -16,20 +16,20 @@ int main(int argc, char** args) {
     while (running) {
         while (SDL_PollEvent(&e)) {
 
-			switch (e.type) {
-			case SDL_QUIT:
-				running = false;
-				break;
+            switch (e.type) {
+            case SDL_QUIT:
+                running = false;
+                break;
 
-			case SDL_KEYDOWN:
-				if (e.key.keysym.scancode == SDL_SCANCODE_ESCAPE) running = false;
-				break;
+            case SDL_KEYDOWN:
+                if (e.key.keysym.scancode == SDL_SCANCODE_ESCAPE) running = false;
+                break;
 
-			case SDL_WINDOWEVENT:
-				if (e.window.event == SDL_WINDOWEVENT_SIZE_CHANGED) {
+            case SDL_WINDOWEVENT:
+                if (e.window.event == SDL_WINDOWEVENT_SIZE_CHANGED) {
                     gfx.resize(e.window.data1, e.window.data2);
-				}
-				break;
+                }
+                break;
 
 
             case SDL_FINGERDOWN:
@@ -41,8 +41,8 @@ int main(int argc, char** args) {
                     if (e.type == SDL_FINGERMOTION) game.get_input().finger_motion(e.tfinger.fingerId, p);
                     break;
                 }
-			default: break;
-			}
+            default: break;
+            }
         }
 
 
