@@ -5,7 +5,7 @@ LOCAL_MODULE := main
 
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/../SDL2-2.0.7/include\
                     $(LOCAL_PATH)/../SDL2_image-2.0.2\
-					$(LOCAL_PATH)/../../../android-ndk-r16/sources/third_party/vulkan/src/libs/glm
+					$(LOCAL_PATH)/../../../../android-ndk-r16/sources/third_party/vulkan/src/libs/glm
 
 LOCAL_CPP_FEATURES := rtti
 

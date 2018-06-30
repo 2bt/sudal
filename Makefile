@@ -23,7 +23,7 @@ clean:
 
 
 android:
-	cd android-project && ../android-ndk-r16/ndk-build
+	cd android-project && ../../android-ndk-r16/ndk-build
 
 android-install: android
 	cd android-project && ant debug install
